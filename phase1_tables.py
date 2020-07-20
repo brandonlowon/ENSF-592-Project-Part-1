@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import pandas as pd
 import pprint
 import dns
+import datetime
 
 
 def get_year_and_type():
@@ -52,17 +53,11 @@ def display_table(type, year):
 
     # Determine correct database-->collection
 
-    column_filter = {'_id': 0,
-                     'the_geom': 0,
-                     'length_m': 0}
-
-    column_filter_2018 = {'_id': 0,
-                          'Shape_Leng': 0,
-                          'multilinestring': 0}
+    column_filter = {'_id': 0}
 
     table_read = 0
     table_sort = 0
-    limit_count = 10
+    limit_count = 20
 
     if type == "Traffic Volume":
         if year == 2016:
@@ -85,14 +80,25 @@ def display_table(type, year):
         elif year == 2018:
             collection = db.get_collection("trafficVolume2018")
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter_2018).sort("SECNAME", 1).limit(limit_count)
+            table_read = collection.find({}, column_filter).sort("SECNAME", 1).limit(limit_count)
 
             # Sort Button Table - Volume Descending
-            table_sort = collection.find({}, column_filter_2018).sort("VOLUME", 1).limit(limit_count)
+            table_sort = collection.find({}, column_filter).sort("VOLUME", 1).limit(limit_count)
 
-    # if type == "Accident":
-    #     collection = db.get_collection("trafficIncidents")
-    #     list = db.trafficIncidents.find({}, {'_id': 0, 'INCIDENT INFO': 1, 'DESCRIPTION': 1, 'Count': 1})
+    if type == "Accident":
+        collection = db.get_collection("trafficIncidents")
+        list = db.trafficIncidents.find({}, {'_id': 0, 'MODIFIED_DT': 0, 'QUADRANT': 0, 'Longitude': 0, 'Latitude': 0}).sort("id", -1).limit(20)
+
+
+        d = datetime.datetime(2016, 1, 1, 1,1,1)
+
+
+        accidents_2016 = db.trafficIncidents.find({"START_DT" : {"$gt" : d}})
+
+        print(accidents_2016)
+
+        for item in accidents_2016:
+            print(item)
 
     return table_read, table_sort
 
