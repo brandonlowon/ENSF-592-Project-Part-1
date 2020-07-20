@@ -62,41 +62,45 @@ def display_table(type, year):
 
     table_read = 0
     table_sort = 0
+    limit_count = 10
 
     if type == "Traffic Volume":
         if year == 2016:
             collection = db.get_collection("TrafficVolumeFlow2016")
 
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(5)
+            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(limit_count)
 
             # Sort Button Table - Volume Descending
-            table_sort = collection.find({}, column_filter).sort("volume", -1).limit(10)
+            table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
 
         elif year == 2017:
             collection = db.get_collection("TrafficVolumeFlow2017")
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(10)
+            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(limit_count)
 
             # Sort Button Table - Volume Descending
-            table_sort = collection.find({}, column_filter).sort("volume", -1).limit(10)
+            table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
 
         elif year == 2018:
             collection = db.get_collection("trafficVolume2018")
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter_2018).sort("SECNAME", 1)
+            table_read = collection.find({}, column_filter_2018).sort("SECNAME", 1).limit(limit_count)
 
             # Sort Button Table - Volume Descending
-            table_sort = collection.find({}, column_filter_2018).sort("VOLUME", 1)
+            table_sort = collection.find({}, column_filter_2018).sort("VOLUME", 1).limit(limit_count)
 
-    # if type == "Accident":
-    #     collection = db.get_collection("trafficIncidents")
-    #     list = db.trafficIncidents.find({$text:{$search: "2020"}}, {'_id': 0, 'INCIDENT INFO': 1, 'DESCRIPTION': 1, 'Count': 1})
+    if type == "Accident":
+        collection = db.get_collection("trafficIncidents")
+        list = db.trafficIncidents.find({}, {'_id': 0, 'INCIDENT INFO': 1, 'DESCRIPTION': 1, 'Count': 1})
 
     return table_read, table_sort
 
 
 table_read, table_sort = display_table("Traffic Volume", 2016)
+
+table_read = list(table_read)
+table_sort = list(table_sort)
 
 for item in table_read:
     print(item)
