@@ -90,9 +90,9 @@ def display_table(type, year):
             # Sort Button Table - Volume Descending
             table_sort = collection.find({}, column_filter_2018).sort("VOLUME", 1).limit(limit_count)
 
-    if type == "Accident":
-        collection = db.get_collection("trafficIncidents")
-        list = db.trafficIncidents.find({}, {'_id': 0, 'INCIDENT INFO': 1, 'DESCRIPTION': 1, 'Count': 1})
+    # if type == "Accident":
+    #     collection = db.get_collection("trafficIncidents")
+    #     list = db.trafficIncidents.find({}, {'_id': 0, 'INCIDENT INFO': 1, 'DESCRIPTION': 1, 'Count': 1})
 
     return table_read, table_sort
 
