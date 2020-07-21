@@ -8,6 +8,15 @@ cluster = MongoClient(
     "mongodb+srv://andrew:1234@cluster0.pgi1d.mongodb.net/CalgaryTraffic?ssl=true&ssl_cert_reqs=CERT_NONE")
 db = cluster["Test"]
 
+# DATABASE COLLECTION REMOVAL
+# db.trafficVolume2018.delete_many({})
+# db.Accident2016.delete_many({})
+# db.Accident2017.delete_many({})
+# db.Accident2018.delete_many({})
+# db.TrafficVolume2016.delete_many({})
+# db.TrafficVolume2017.delete_many({})
+# db.TrafficVolume2018.delete_many({})
+
 # Load Traffic Volume Data
 df_volume_2016 = pd.read_csv("CSV/TrafficFlow2016_OpenData.csv")
 df_volume_2017 = pd.read_csv("CSV/2017_Traffic_Volume_Flow.csv")
