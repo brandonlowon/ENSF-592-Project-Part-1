@@ -105,16 +105,58 @@ def display_table(type, year):
     return table_read, table_sort
 
 
-table_read, table_sort = display_table("Traffic Volume", 2016)
+def analyze_chart(type, year):
+    cluster = MongoClient(
+        "mongodb+srv://andrew:1234@cluster0.pgi1d.mongodb.net/CalgaryTraffic?ssl=true&ssl_cert_reqs=CERT_NONE")
+    db = cluster["Test"]
 
-table_read = list(table_read)
-table_sort = list(table_sort)
+# TRAFFIC MAX
+    if type == "Traffic Volume":
+        if year == 2016:
+            collection = db.get_collection("TrafficVolume2016")
+            max = collection.find({}, {'_id': 0, 'volume': 1}).sort("volume", -1).limit(1)
 
-for item in table_read:
-    print(item)
+        elif year == 2017:
+            collection = db.get_collection("TrafficVolume2017")
+            max = collection.find({}, {'_id': 0, 'volume': 1}).sort("volume", -1).limit(1)
 
-print("\n")
+        elif year == 2018:
+            collection = db.get_collection("TrafficVolume2018")
+            max = collection.find({}, {'_id': 0, 'VOLUME': 1}).sort("VOLUME", -1).limit(1)
 
-for item in table_sort:
-    print(item)
+# ACCIDENT MAX
+    if type == "Accident":
+        if year == 2016:
+            collection = db.get_collection("Accident2016")
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}))
+
+        elif year == 2017:
+            collection = db.get_collection("Accident2017")
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}))
+
+        elif year == 2018:
+            collection = db.get_collection("Accident2018")
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}))
+
+    return max
+
+
+
+#
+# max_value = list(analyze_chart("Accident", 2018))
+#
+# print(max_value)
+
+# table_read, table_sort = display_table("Traffic Volume", 2016)
+#
+# table_read = list(table_read)
+# table_sort = list(table_sort)
+#
+# for item in table_read:
+#     print(item)
+#
+# print("\n")
+#
+# for item in table_sort:
+#     print(item)
 
