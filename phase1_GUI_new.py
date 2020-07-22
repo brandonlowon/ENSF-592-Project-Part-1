@@ -78,7 +78,7 @@ def read_database(type, year):
 
 
                 # Sort Button Table - Volume Descending
-                table_sort = collection.find({}, column_filter).sort("VOLUME", -1).limit(limit_count)
+                table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
                 table_rows_sorted = [row for row in table_sort]
 
 
