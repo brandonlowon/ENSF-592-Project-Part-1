@@ -251,9 +251,9 @@ def chart_data(type, year):
 
         elif year == 2018:
             collection = db.get_collection("TrafficVolume2018")
-            max = collection.find({}, {'_id': 0, 'VOLUME': 1}).sort("VOLUME", -1).limit(1)
+            max = collection.find({}, {'_id': 0, 'volume': 1}).sort('volume', -1).limit(1)
             res = []
-            res.append(max[0]['VOLUME'])
+            res.append(max[0]['volume'])
 
 # ACCIDENT MAX
     if type == "Accident":
@@ -319,7 +319,7 @@ com_box_type.current(0)
 com_box_type.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = "ew")
 
 #combo box for year
-com_box_year = ttk.Combobox(frm_buttons, values = ["2016", "2017", "2018", "2019", "2020"] )
+com_box_year = ttk.Combobox(frm_buttons, values = ["2016", "2017", "2018"] )
 com_box_year.current(0)
 com_box_year.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "ew")
 
