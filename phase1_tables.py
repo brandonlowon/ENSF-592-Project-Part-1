@@ -5,6 +5,7 @@ import pandas as pd
 import pprint
 import dns
 import datetime
+import string
 
 
 def get_year_and_type():
@@ -14,31 +15,6 @@ def get_year_and_type():
     type = com_box_type.get()
     print(type, year)
     return type, year
-
-# Read Steps:
-# 1. Call get_year_and_type and return year & type of desired dataset
-# 2. Find correct collection based off of return values
-# 3. Display data (accident vs traffic volume) and (year) [top 10 entries]
-# 4. Send status message
-
-# Sort Steps:
-# 1. Call get_year_and_type and return year & type of desired dataset
-# 2. Find correct collection based off of return values
-# 3. Display Data: Sort by traffic volume if type = traffic volume | Sort by accident if type=accident [top 10 entries]
-# 4. Send status message
-
-# Analysis Steps:
-# 1. Call get_year_and_type and return year & type of desired dataset
-# 2. Find correct collection based off of return values
-# 3. Find maximum values (sum i think) of traffic volume/accident for 2016, 2017, 2018
-# 4. Send status message
-
-# Map Steps:
-# 1. Call get_year_and_type and return year & type of desired dataset
-# 2. Find correct collection based off of return values
-# 3. Find section with max accidents/max traffic volume ???
-# 4. Display map with highlighted section
-# 5. Send status message
 
 
 def display_table(type, year):
@@ -58,7 +34,7 @@ def display_table(type, year):
 
     table_read = 0
     table_sort = 0
-    limit_count = 20
+    limit_count = 10
 
     if type == "Traffic Volume":
         if year == 2016:
@@ -73,7 +49,7 @@ def display_table(type, year):
         elif year == 2017:
             collection = db.get_collection("TrafficVolume2017")
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(limit_count)
+            table_read = collection.find({}, column_filter).sort("index", 1).limit(limit_count)
 
             # Sort Button Table - Volume Descending
             table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
@@ -81,12 +57,12 @@ def display_table(type, year):
         elif year == 2018:
             collection = db.get_collection("TrafficVolume2018")
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter).sort("SECNAME", 1).limit(limit_count)
+            table_read = collection.find({}, column_filter).sort("index", 1).limit(limit_count)
 
             # Sort Button Table - Volume Descending
-            table_sort = collection.find({}, column_filter).sort("VOLUME", 1).limit(limit_count)
+            table_sort = collection.find({}, column_filter).sort("VOLUME", -1).limit(limit_count)
 
-    if type == "Accident":
+    if type == "Accident":  # NEED TO FIX THIS TO DISPLAY GRID COUNTS
         if year == 2016:
             collection = db.get_collection("Accident2016")
             table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(limit_count)
@@ -105,7 +81,7 @@ def display_table(type, year):
     return table_read, table_sort
 
 
-def analyze_chart(type, year):
+def chart_data(type, year):
     cluster = MongoClient(
         "mongodb+srv://andrew:1234@cluster0.pgi1d.mongodb.net/CalgaryTraffic?ssl=true&ssl_cert_reqs=CERT_NONE")
     db = cluster["Test"]
@@ -115,39 +91,124 @@ def analyze_chart(type, year):
         if year == 2016:
             collection = db.get_collection("TrafficVolume2016")
             max = collection.find({}, {'_id': 0, 'volume': 1}).sort("volume", -1).limit(1)
+            res = []
+            res.append(max[0]['volume'])
 
         elif year == 2017:
             collection = db.get_collection("TrafficVolume2017")
             max = collection.find({}, {'_id': 0, 'volume': 1}).sort("volume", -1).limit(1)
+            res = []
+            res.append(max[0]['volume'])
 
         elif year == 2018:
             collection = db.get_collection("TrafficVolume2018")
             max = collection.find({}, {'_id': 0, 'VOLUME': 1}).sort("VOLUME", -1).limit(1)
+            res = []
+            res.append(max[0]['VOLUME'])
 
 # ACCIDENT MAX
     if type == "Accident":
         if year == 2016:
             collection = db.get_collection("Accident2016")
-            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}))
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}).sort('Latitude', 1))
+            res = []
+            for i in range(len(max)):
+                res.append(tuple([max[i]['Longitude'], max[i]['Latitude']]))
 
         elif year == 2017:
             collection = db.get_collection("Accident2017")
-            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}))
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}).sort('Latitude', 1))
+            res = []
+            for i in range(len(max)):
+                res.append(tuple([max[i]['Longitude'], max[i]['Latitude']]))
 
         elif year == 2018:
             collection = db.get_collection("Accident2018")
-            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}))
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}).sort('Latitude', 1))
+            res = []
+            for i in range(len(max)):
+                res.append(tuple([max[i]['Longitude'], max[i]['Latitude']]))
 
-    return max
+    return res
 
 
+def map_data(type, year):
+    cluster = MongoClient(
+        "mongodb+srv://andrew:1234@cluster0.pgi1d.mongodb.net/CalgaryTraffic?ssl=true&ssl_cert_reqs=CERT_NONE")
+    db = cluster["Test"]
 
-#
-# max_value = list(analyze_chart("Accident", 2018))
-#
-# print(max_value)
+# TRAFFIC MAX
+    if type == "Traffic Volume":
+        if year == 2016:
+            collection = db.get_collection("TrafficVolume2016")
+            max = list(collection.find({}, {'_id': 0, 'the_geom': 1}).sort("volume", -1).limit(1))
+            res = []
+            tmp = []
 
-# table_read, table_sort = display_table("Traffic Volume", 2016)
+            s = max[0]['the_geom']
+            s = s.replace("MULTILINESTRING ((", '')
+            tmp = s.split(",")
+            s = tmp[0]
+            res = s.split()
+            res[0], res[1] = float(res[0]), float(res[1])
+
+        elif year == 2017:
+            collection = db.get_collection("TrafficVolume2017")
+            max = list(collection.find({}, {'_id': 0, 'the_geom': 1}).sort("volume", -1).limit(1))
+            res = []
+            tmp = []
+
+            s = max[0]['the_geom']
+            s = s.replace("MULTILINESTRING ((", '')
+            tmp = s.split(",")
+            s = tmp[0]
+            res = s.split()
+            res[0], res[1] = float(res[0]), float(res[1])
+
+        elif year == 2018:
+            collection = db.get_collection("TrafficVolume2018")
+            max = list(collection.find({}, {'_id': 0}).sort("VOLUME", -1).limit(1))
+            res = []
+            tmp = []
+
+            s = max[0]['multilinestring']
+            s = s.replace("MULTILINESTRING ((", '')
+            tmp = s.split(",")
+            s = tmp[0]
+            res = s.split()
+            res[0], res[1] = float(res[0]), float(res[1])
+
+# ACCIDENT MAX
+    if type == "Accident":
+        if year == 2016:
+            collection = db.get_collection("Accident2016")
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}).sort('Latitude', 1))
+            res = []
+            for i in range(len(max)):
+                res.append(tuple([max[i]['Longitude'], max[i]['Latitude']]))
+
+        elif year == 2017:
+            collection = db.get_collection("Accident2017")
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}).sort('Latitude', 1))
+            res = []
+            for i in range(len(max)):
+                res.append(tuple([max[i]['Longitude'], max[i]['Latitude']]))
+
+        elif year == 2018:
+            collection = db.get_collection("Accident2018")
+            max = list(collection.find({}, {'_id': 0, 'Longitude' : 1, 'Latitude' : 1}).sort('Latitude', 1))
+            res = []
+            for i in range(len(max)):
+                res.append(tuple([max[i]['Longitude'], max[i]['Latitude']]))
+
+    return res
+
+
+# TEST CODE FOR chart_data() and map_data()
+# data = map_data("Accident", 2016)
+# print(data)
+# TEST CODE FOR display_table()
+# table_read, table_sort = display_table("Accident", 2016)
 #
 # table_read = list(table_read)
 # table_sort = list(table_sort)
@@ -159,4 +220,3 @@ def analyze_chart(type, year):
 #
 # for item in table_sort:
 #     print(item)
-
