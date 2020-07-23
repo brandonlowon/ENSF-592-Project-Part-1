@@ -10,12 +10,14 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from foliumMap import createMarker
+from Grid import createMarker
 from matplotlib.ticker import MaxNLocator
 from gridDictCreate import createGridDict
 
 def get_year_and_type():
     '''gets the year and type selection from the combo boxes
+
+        returns: type, year 
     '''
     year = com_box_year.get()
     type = com_box_type.get()
@@ -132,7 +134,7 @@ def display_table():
 
 
 def display_sorted_table():
-    '''Dispalys a sorted version of a specified table on the GUI
+    '''Displays a sorted version of a specified table on the GUI
     '''
     try:
         type = get_year_and_type()[0]
@@ -144,6 +146,7 @@ def display_sorted_table():
 
         if type == "Accident":
             data = createGridDict(year, type)
+            print(data)
 
 
         create_table(data)
@@ -155,7 +158,7 @@ def display_sorted_table():
 
 
 def create_table(data):
-    '''Creates a table 
+    '''Creates a table and adds to GUI display area
     '''
     headings = [column_name for column_name, value in data[0].items()]
 
@@ -165,8 +168,8 @@ def create_table(data):
 
     # configure tree (table) heading and column display
     for i in range(len(headings)):
-        tree.heading(i, text = headings[i])
-        tree.column(i, anchor = "center", width = 200)
+        tree.heading(i, text = headings[i], anchor = 'w')
+        tree.column(i, anchor = "w", width = 200)
 
     # add data rows to table  
     for row in data:
@@ -301,7 +304,7 @@ def display_status_message(year, type, button, is_success):
 
 window = tk.Tk()
 window.title("Calgary Traffic Analysis")
-# window.geometry('350x250')
+window.geometry('800x500')
 
 window.rowconfigure(0, minsize = 50, weight = 1)
 window.columnconfigure(1, minsize = 50, weight =1)
