@@ -58,64 +58,64 @@ def read_database(type, year):
             collection = db.get_collection("TrafficVolume2016")
 
             # Read Button Table - Alphabetical
-            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(limit_count)
+            table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(0)
             table_rows = [row for row in table_read]
 
 
             # Sort Button Table - Volume Descending
-            table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
+            table_sort = collection.find({}, column_filter).sort("volume", -1).limit(0)
             table_rows_sorted = [row for row in table_sort]
 
 
         elif year == 2017:
                 collection = db.get_collection("TrafficVolume2017")
                 # Read Button Table - Alphabetical
-                table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(limit_count)
+                table_read = collection.find({}, column_filter).sort("segment_name", 1).limit(0)
                 table_rows = [row for row in table_read]
 
 
                 # Sort Button Table - Volume Descending
-                table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
+                table_sort = collection.find({}, column_filter).sort("volume", -1).limit(0)
                 table_rows_sorted = [row for row in table_sort]
 
 
         elif year == 2018:
                 collection = db.get_collection("TrafficVolume2018")
                 # Read Button Table - Alphabetical
-                table_read = collection.find({}, column_filter).sort("SECNAME", 1).limit(limit_count)
+                table_read = collection.find({}, column_filter).sort("SECNAME", 1).limit(0)
                 table_rows = [row for row in table_read]
 
 
                 # Sort Button Table - Volume Descending
-                table_sort = collection.find({}, column_filter).sort("volume", -1).limit(limit_count)
+                table_sort = collection.find({}, column_filter).sort("volume", -1).limit(0)
                 table_rows_sorted = [row for row in table_sort]
 
 
     if type == "Accident":
         if year == 2016:
             collection = db.get_collection("Accident2016")
-            table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(limit_count)
+            table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(0)
             table_rows = [row for row in table_read]
 
-            table_sort = collection.find({}, {'_id': 0, 'index': 0}).sort("Count", -1).limit(limit_count)
+            table_sort = collection.find({}, {'_id': 0, 'index': 0}).sort("Count", -1).limit(0)
             table_rows_sorted = [row for row in table_sort]
 
 
         elif year == 2017:
             collection = db.get_collection("Accident2017")
-            table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(limit_count)
+            table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(0)
             table_rows = [row for row in table_read]
 
-            table_sort = collection.find({}, {'_id': 0, 'index': 0}).sort("Count", -1).limit(limit_count)
+            table_sort = collection.find({}, {'_id': 0, 'index': 0}).sort("Count", -1).limit(0)
             table_rows_sorted = [row for row in table_sort]
 
 
         elif year == 2018:
             collection = db.get_collection("Accident2018")
-            table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(limit_count)
+            table_read = collection.find({}, {'_id': 0, 'index': 0}).sort("INCIDENT INFO", 1).limit(0)
             table_rows = [row for row in table_read]
 
-            table_sort = collection.find({}, {'_id': 0, 'index': 0}).sort("Count", -1).limit(limit_count)
+            table_sort = collection.find({}, {'_id': 0, 'index': 0}).sort("Count", -1).limit(0)
             table_rows_sorted = [row for row in table_sort]
 
 
